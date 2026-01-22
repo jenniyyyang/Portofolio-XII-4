@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaHub - Blog Hobi Film Premium</title>
+    <meta name="description" content="Blog hobi film terlengkap dengan ulasan, trailer, dan rekomendasi film terbaru">
+    <meta name="keywords" content="film, movie, review, trailer, cinema, blog">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .parallax {
+            transform: translateY(var(--scroll-y, 0));
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .movie-card {
+            transition: all 0.3s ease;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .virtual-room {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .virtual-room::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="seats" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="8" height="6" x="1" y="2" fill="%23333" rx="1"/></pattern></defs><rect width="100" height="100" fill="url(%23seats)" opacity="0.3"/></svg>') repeat;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .carousel-container {
+            overflow: hidden;
+        }
+        
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .testimonial-card {
+            min-width: 300px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Header / Navbar -->
+    <header class="fixed top-0 w-full z-50 glass-effect">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-film text-2xl text-purple-600"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">CinemaHub</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#home" class="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Beranda</a>
+                    <a href="#reviews" class="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Ulasan</a>
+                    <a href="#gallery" class="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Galeri</a>
+                    <a href="#events" class="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Event</a>
+                    <a href="#contact" class="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Kontak</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Search Bar -->
+                    <div class="relative hidden sm:block">
+                        <input type="text" placeholder="Cari film..." class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- Language Switcher -->
+                    <select id="languageSwitch" class="bg-transparent text-gray-700 dark:text-gray-300 border-none focus:outline-none">
+                        <option value="id">ID</option>
+                        <option value="en">EN</option>
+                    </select>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu -->
+                    <button id="mobileMenuToggle" class="md:hidden p-2">
+                        <i class="fas fa-bars text-gray-700 dark:text-gray-300"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 bg-black bg-opacity-50 hidden">
+        <div class="fixed right-0 top-0 h-full w-64 bg-white dark:bg-gray-800 p-6">
+            <button id="closeMobileMenu" class="absolute top-4 right-4">
+                <i class="fas fa-times text-gray-700 dark:text-gray-300"></i>
+            </button>
+            <nav class="mt-8 space-y-4">
+                <a href="#home" class="block text-gray-700 dark:text-gray-300 hover:text-purple-600">Beranda</a>
+                <a href="#reviews" class="block text-gray-700 dark:text-gray-300 hover:text-purple-600">Ulasan</a>
+                <a href="#gallery" class="block text-gray-700 dark:text-gray-300 hover:text-purple-600">Galeri</a>
+                <a href="#events" class="block text-gray-700 dark:text-gray-300 hover:text-purple-600">Event</a>
+                <a href="#contact" class="block text-gray-700 dark:text-gray-300 hover:text-purple-600">Kontak</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 fade-in floating">
+                <span data-id="hero-title">Jelajahi Dunia Sinema</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 fade-in">
+                <span data-id="hero-subtitle">Temukan ulasan, trailer, dan rekomendasi film terbaik</span>
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in">
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full transition-colors">
+                    <span data-id="explore-btn">Jelajahi Film</span>
+                </button>
+                <button class="border-2 border-white text-white hover:bg-white hover:text-purple-600 px-8 py-3 rounded-full transition-colors">
+                    <span data-id="watch-trailer">Tonton Trailer</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside class="lg:w-1/4 bg-white dark:bg-gray-800 p-6 shadow-lg">
+            <div class="sticky top-24">
+                <!-- Trending & Coming Soon -->
+                <div class="mb-8 fade-in">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+                        <span data-id="trending-title">Trending & Coming Soon</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="w-12 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded flex items-center justify-center">
+                                <i class="fas fa-fire text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white text-sm">Dune: Part Two</h4>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Sci-Fi • 2024</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="w-12 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded flex items-center justify-center">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 dark:text-white text-sm">Oppenheimer</h4>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Drama • 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Genre Filter -->
+                <div class="mb-8 fade-in">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+                        <span data-id="genre-title">Kategori Genre</span>
+                    </h3>
+                    <div class="space-y-2">
+                        <button class="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900 rounded transition-colors">Aksi</button>
+                        <button class="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900 rounded transition-colors">Drama</button>
+                        <button class="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900 rounded transition-colors">Komedi</button>
+                        <button class="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900 rounded transition-colors">Horor</button>
+                        <button class="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900 rounded transition-colors">Sci-Fi</button>
+                    </div>
+                </div>
+
+                <!-- Statistics Counter -->
+                <div class="mb-8 fade-in">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+                        <span data-id="stats-title">Statistik</span>
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="text-center p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white">
+                            <div class="text-2xl font-bold" id="movieCounter">1,247</div>
+                            <div class="text-sm">Film Direview</div>
+                        </div>
+                        <div class="text-center p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white">
+                            <div class="text-2xl font-bold" id="userCounter">15,892</div>
+                            <div class="text-sm">Pengunjung</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="lg:w-3/4 p-6">
+            <!-- Featured Movies Section -->
+            <section id="reviews" class="mb-12 fade-in">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    <span data-id="featured-title">Film Unggulan</span>
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="movie-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="h-64 bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                            <i class="fas fa-play text-white text-4xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">The Batman</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Aksi • 2022 • 2j 56m</p>
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="ml-2 text-gray-600 dark:text-gray-400">4.5/5</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Batman mengungkap korupsi di Gotham City yang terhubung dengan keluarganya sendiri...</p>
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors">
+                                <span data-id="read-review">Baca Ulasan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="movie-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="h-64 bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                            <i class="fas fa-rocket text-white text-4xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Interstellar</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Sci-Fi • 2014 • 2j 49m</p>
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="ml-2 text-gray-600 dark:text-gray-400">5.0/5</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Sekelompok penjelajah memanfaatkan lubang cacing yang baru ditemukan untuk melampaui batas perjalanan ruang angkasa...</p>
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors">
+                                <span data-id="read-review">Baca Ulasan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="movie-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="h-64 bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center">
+                            <i class="fas fa-mask text-white text-4xl"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Joker</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Drama • 2019 • 2j 2m</p>
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="ml-2 text-gray-600 dark:text-gray-400">4.2/5</span>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Dalam Gotham City tahun 1981, Arthur Fleck bekerja sebagai badut dan bercita-cita menjadi komedian stand-up...</p>
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors">
+                                <span data-id="read-review">Baca Ulasan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Virtual Movie Room -->
+            <section class="mb-12 fade-in">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    <span data-id="virtual-room-title">Virtual Movie Room 360°</span>
+                </h2>
+                <div class="virtual-room rounded-xl p-8 text-center relative">
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold text-white mb-4">Rasakan Pengalaman Bioskop di Rumah</h3>
+                        <p class="text-gray-300 mb-6">Nikmati film favorit Anda dalam suasana bioskop virtual yang imersif</p>
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full transition-colors">
+                            <i class="fas fa-vr-cardboard mr-2"></i>
+                            <span data-id="enter-room">Masuk ke Ruang Virtual</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery" class="mb-12 fade-in">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    <span data-id="gallery-title">Galeri Poster & Trailer</span>
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="aspect-square bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                        <i class="fas fa-image text-white text-2xl"></i>
+                    </div>
+                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-blue-500 rounded-lg flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                        <i class="fas fa-play text-white text-2xl"></i>
+                    </div>
+                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                        <i class="fas fa-camera text-white text-2xl"></i>
+                    </div>
+                    <div class="aspect-square bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                        <i class="fas fa-film text-white text-2xl"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonial Carousel -->
+            <section class="mb-12 fade-in">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    <span data-id="testimonial-title">Testimoni Penonton</span>
+                </h2>
+                <div class="carousel-container">
+                    <div class="carousel-track" id="testimonialTrack">
+                        <div class="testimonial-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">A</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-800 dark:text-white">Ahmad Rizki</h4>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300">"Blog ini sangat membantu saya menemukan film-film berkualitas. Ulasannya detail dan objektif!"</p>
+                        </div>
+                        
+                        <div class="testimonial-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold">S</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-800 dark:text-white">Sari Dewi</h4>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300">"Fitur virtual movie room-nya keren banget! Berasa nonton di bioskop sungguhan."</p>
+                        </div>
+                        
+                        <div class="testimonial-card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">B</div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-800 dark:text-white">Budi Santoso</h4>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300">"Rekomendasi filmnya selalu tepat sasaran. Terima kasih CinemaHub!"</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="events" class="mb-12 fade-in">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+                    <span data-id="events-title">Event & Festival Film</span>
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calendar text-white"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Festival Film Indonesia 2024</h3>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">15-20 Maret 2024</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">Bergabunglah dalam perayaan sinema Indonesia terbesar tahun ini dengan berbagai pemutaran film eksklusif.</p>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            <span data-id="learn-more">Pelajari Lebih Lanjut</span>
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-white"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Komunitas Pecinta Film Jakarta</h3>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Setiap Sabtu</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">Diskusi mingguan tentang film-film terbaru dan klasik bersama sesama penggemar sinema.</p>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            <span data-id="join-community">Bergabung</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-gray-100 dark:bg-gray-800 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12 fade-in">
+                    <span data-id="contact-title">Hubungi Kami</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Contact Form -->
+                    <div class="bg-white dark:bg-gray-700 rounded-xl p-8 shadow-lg fade-in">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">
+                            <span data-id="send-message">Kirim Pesan</span>
+                        </h3>
+                        <form id="contactForm" class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2">Nama</label>
+                                <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-800 dark:text-white" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-800 dark:text-white" required>
+                            </div>
+                            <div>
+                                <label for="subject" class="block text-gray-700 dark:text-gray-300 mb-2">Subjek</label>
+                                <select id="subject" name="subject" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                                    <option value="review">Rekomendasi Film</option>
+                                    <option value="feedback">Kritik & Saran</option>
+                                    <option value="collaboration">Kolaborasi</option>
+                                    <option value="other">Lainnya</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="message" class="block text-gray-700 dark:text-gray-300 mb-2">Pesan</label>
+                                <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-800 dark:text-white" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition-colors">
+                                <span data-id="send-btn">Kirim Pesan</span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Contact Info & Map -->
+                    <div class="space-y-6 fade-in">
+                        <div class="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                                <span data-id="contact-info">Informasi Kontak</span>
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope text-purple-600 w-6"></i>
+                                    <span class="text-gray-700 dark:text-gray-300 ml-3">info@cinemahub.com</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone text-purple-600 w-6"></i>
+                                    <span class="text-gray-700 dark:text-gray-300 ml-3">+62 21 1234 5678</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-map-marker-alt text-purple-600 w-6"></i>
+                                    <span class="text-gray-700 dark:text-gray-300 ml-3">Jakarta, Indonesia</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map Integration -->
+                        <div class="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                                <span data-id="location">Lokasi Kami</span>
+                            </h3>
+                            <div class="h-48 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-map text-4xl text-gray-500 mb-2"></i>
+                                    <p class="text-gray-600 dark:text-gray-400">Interactive Map</p>
+                                    <p class="text-sm text-gray-500">Jakarta, Indonesia</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Media -->
+                        <div class="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                                <span data-id="follow-us">Ikuti Kami</span>
+                            </h3>
+                            <div class="flex space-x-4">
+                                <button class="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-facebook-f"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-pink-600 hover:bg-pink-700 text-white rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-instagram"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-black hover:bg-gray-800 text-white rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-x-twitter"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center transition-colors">
+                                    <i class="fab fa-tiktok"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-film text-2xl text-purple-600"></i>
+                        <span class="text-xl font-bold">CinemaHub</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        <span data-id="footer-desc">Platform terdepan untuk ulasan, rekomendasi, dan diskusi film berkualitas tinggi.</span>
+                    </p>
+                    <div class="flex space-x-4">
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </button>
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-x-twitter"></i>
+                        </button>
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">
+                        <span data-id="quick-links">Tautan Cepat</span>
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="#reviews" class="text-gray-400 hover:text-white transition-colors">Ulasan Film</a></li>
+                        <li><a href="#gallery" class="text-gray-400 hover:text-white transition-colors">Galeri</a></li>
+                        <li><a href="#events" class="text-gray-400 hover:text-white transition-colors">Event</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">
+                        <span data-id="categories">Kategori</span>
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Film Aksi</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Film Drama</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Film Komedi</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Film Horor</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">
+                        <span data-id="newsletter">Newsletter</span>
+                    </h3>
+                    <p class="text-gray-400 mb-4">
+                        <span data-id="newsletter-desc">Dapatkan update film terbaru langsung di email Anda</span>
+                    </p>
+                    <form id="newsletterForm" class="flex">
+                        <input type="email" placeholder="Email Anda" class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-r-lg transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    <span data-id="copyright">© 2024 CinemaHub. Semua hak dilindungi undang-undang.</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div class="chatbot">
+        <button id="chatbotToggle" class="w-16 h-16 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg flex items-center justify-center transition-colors">
+            <i class="fas fa-comments text-xl"></i>
+        </button>
+        
+        <div id="chatbotWindow" class="hidden fixed bottom-24 right-4 w-80 h-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+            <div class="bg-purple-600 text-white p-4 rounded-t-xl flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-robot mr-2"></i>
+                    <span data-id="cinema-assistant">Asisten Cinema</span>
+                </div>
+                <button id="closeChatbot">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 h-64 overflow-y-auto" id="chatMessages">
+                <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-3">
+                    <p class="text-sm text-gray-800 dark:text-white">
+                        <span data-id="chatbot-welcome">Halo! Saya bisa membantu Anda menemukan film yang sesuai dengan mood Anda. Apa genre yang Anda sukai?</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <form id="chatForm" class="flex">
+                    <input type="text" id="chatInput" placeholder="Ketik pesan..." class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm">
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-r-lg transition-colors">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            id: {
+                'hero-title': 'Jelajahi Dunia Sinema',
+                'hero-subtitle': 'Temukan ulasan, trailer, dan rekomendasi film terbaik',
+                'explore-btn': 'Jelajahi Film',
+                'watch-trailer': 'Tonton Trailer',
+                'trending-title': 'Trending & Coming Soon',
+                'genre-title': 'Kategori Genre',
+                'stats-title': 'Statistik',
+                'featured-title': 'Film Unggulan',
+                'read-review': 'Baca Ulasan',
+                'virtual-room-title': 'Virtual Movie Room 360°',
+                'enter-room': 'Masuk ke Ruang Virtual',
+                'gallery-title': 'Galeri Poster & Trailer',
+                'testimonial-title': 'Testimoni Penonton',
+                'events-title': 'Event & Festival Film',
+                'learn-more': 'Pelajari Lebih Lanjut',
+                'join-community': 'Bergabung',
+                'contact-title': 'Hubungi Kami',
+                'send-message': 'Kirim Pesan',
+                'send-btn': 'Kirim Pesan',
+                'contact-info': 'Informasi Kontak',
+                'location': 'Lokasi Kami',
+                'follow-us': 'Ikuti Kami',
+                'footer-desc': 'Platform terdepan untuk ulasan, rekomendasi, dan diskusi film berkualitas tinggi.',
+                'quick-links': 'Tautan Cepat',
+                'categories': 'Kategori',
+                'newsletter': 'Newsletter',
+                'newsletter-desc': 'Dapatkan update film terbaru langsung di email Anda',
+                'copyright': '© 2024 CinemaHub. Semua hak dilindungi undang-undang.',
+                'cinema-assistant': 'Asisten Cinema',
+                'chatbot-welcome': 'Halo! Saya bisa membantu Anda menemukan film yang sesuai dengan mood Anda. Apa genre yang Anda sukai?'
+            },
+            en: {
+                'hero-title': 'Explore the World of Cinema',
+                'hero-subtitle': 'Discover reviews, trailers, and the best movie recommendations',
+                'explore-btn': 'Explore Movies',
+                'watch-trailer': 'Watch Trailer',
+                'trending-title': 'Trending & Coming Soon',
+                'genre-title': 'Genre Categories',
+                'stats-title': 'Statistics',
+                'featured-title': 'Featured Movies',
+                'read-review': 'Read Review',
+                'virtual-room-title': 'Virtual Movie Room 360°',
+                'enter-room': 'Enter Virtual Room',
+                'gallery-title': 'Poster & Trailer Gallery',
+                'testimonial-title': 'Audience Testimonials',
+                'events-title': 'Events & Film Festivals',
+                'learn-more': 'Learn More',
+                'join-community': 'Join',
+                'contact-title': 'Contact Us',
+                'send-message': 'Send Message',
+                'send-btn': 'Send Message',
+                'contact-info': 'Contact Information',
+                'location': 'Our Location',
+                'follow-us': 'Follow Us',
+                'footer-desc': 'Leading platform for high-quality movie reviews, recommendations, and discussions.',
+                'quick-links': 'Quick Links',
+                'categories': 'Categories',
+                'newsletter': 'Newsletter',
+                'newsletter-desc': 'Get the latest movie updates directly to your email',
+                'copyright': '© 2024 CinemaHub. All rights reserved.',
+                'cinema-assistant': 'Cinema Assistant',
+                'chatbot-welcome': 'Hello! I can help you find movies that match your mood. What genre do you like?'
+            }
+        };
+
+        // Dark mode functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const theme = html.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+        });
+
+        // Language switcher functionality
+        const languageSwitch = document.getElementById('languageSwitch');
+        const currentLang = localStorage.getItem('language') || 'id';
+        languageSwitch.value = currentLang;
+
+        function updateLanguage(lang) {
+            const elements = document.querySelectorAll('[data-id]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-id');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            localStorage.setItem('language', lang);
+        }
+
+        languageSwitch.addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+
+        // Initialize language
+        updateLanguage(currentLang);
+
+        // Mobile menu functionality
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+        });
+
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Parallax effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax');
+            
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                element.style.setProperty('--scroll-y', `${scrolled * speed}px`);
+            });
+        });
+
+        // Counter animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 20);
+        }
+
+        // Animate counters when visible
+        const movieCounter = document.getElementById('movieCounter');
+        const userCounter = document.getElementById('userCounter');
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.id === 'movieCounter') {
+                        animateCounter(entry.target, 1247);
+                    } else if (entry.target.id === 'userCounter') {
+                        animateCounter(entry.target, 15892);
+                    }
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        counterObserver.observe(movieCounter);
+        counterObserver.observe(userCounter);
+
+        // Testimonial carousel
+        const testimonialTrack = document.getElementById('testimonialTrack');
+        let currentTestimonial = 0;
+        const testimonialCards = testimonialTrack.children.length;
+
+        function moveTestimonialCarousel() {
+            currentTestimonial = (currentTestimonial + 1) % testimonialCards;
+            const translateX = -currentTestimonial * 320; // 300px width + 20px margin
+            testimonialTrack.style.transform = `translateX(${translateX}px)`;
+        }
+
+        setInterval(moveTestimonialCarousel, 4000);
+
+        // Chatbot functionality
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const closeChatbot = document.getElementById('closeChatbot');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('hidden');
+        });
+
+        closeChatbot.addEventListener('click', () => {
+            chatbotWindow.classList.add('hidden');
+        });
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message) {
+                addChatMessage(message, 'user');
+                chatInput.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const responses = [
+                        'Berdasarkan preferensi Anda, saya merekomendasikan film "Inception" - thriller sci-fi yang mind-bending!',
+                        'Untuk genre aksi, coba tonton "Mad Max: Fury Road" - visual yang spektakuler!',
+                        'Jika suka drama, "Parasite" adalah pilihan yang sempurna dengan cerita yang mendalam.',
+                        'Untuk komedi, "The Grand Budapest Hotel" memiliki humor yang unik dan visual yang memukau.'
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addChatMessage(randomResponse, 'bot');
+                }, 1000);
+            }
+        });
+
+        function addChatMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-3 rounded-lg mb-3 ${sender === 'user' ? 'bg-purple-600 text-white ml-8' : 'bg-gray-100 dark:bg-gray-700 mr-8'}`;
+            messageDiv.innerHTML = `<p class="text-sm ${sender === 'user' ? 'text-white' : 'text-gray-800 dark:text-white'}">${message}</p>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Form submissions
+        const contactForm = document.getElementById('contactForm');
+        const newsletterForm = document.getElementById('newsletterForm');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Show success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4';
+            successDiv.textContent = 'Pesan Anda telah berhasil dikirim! Kami akan segera merespons.';
+            contactForm.insertBefore(successDiv, contactForm.firstChild);
+            
+            // Reset form
+            contactForm.reset();
+            
+            // Remove success message after 5 seconds
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        });
+
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            
+            // Show success message
+            const button = e.target.querySelector('button');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.add('bg-green-600');
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('bg-green-600');
+            }, 2000);
+            
+            // Reset form
+            e.target.reset();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Analytics simulation (placeholder)
+        function trackEvent(eventName, eventData) {
+            console.log('Analytics Event:', eventName, eventData);
+            // In a real implementation, this would send data to your analytics service
+        }
+
+        // Track button clicks
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                trackEvent('button_click', {
+                    button_text: button.textContent.trim(),
+                    page_url: window.location.href
+                });
+            });
+        });
+
+        // SEO and performance optimizations
+        // Lazy loading for images (if any were added)
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add initial fade-in animation to elements
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    if (el.getBoundingClientRect().top < window.innerHeight) {
+                        el.classList.add('visible');
+                    }
+                });
+            }, 100);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f4058d96845fea',t:'MTc2MDU4MDY0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
